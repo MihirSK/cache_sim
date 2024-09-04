@@ -25,11 +25,11 @@ public:
     Cache(int ways1, int cache_size1, int block_size1)
         : ways(ways1), cache_size(cache_size1), block_size(block_size1) {
         traces = {
-            "C:\\IIITB SEM 3\\CA assignment\\traces\\gcc.trace",
-            "C:\\IIITB SEM 3\\CA assignment\\traces\\gzip.trace",
-            "C:\\IIITB SEM 3\\CA assignment\\traces\\mcf.trace",
-            "C:\\IIITB SEM 3\\CA assignment\\traces\\swim.trace",
-            "C:\\IIITB SEM 3\\CA assignment\\traces\\twolf.trace"
+            ".\\traces\\gcc.trace",
+            ".\\traces\\gzip.trace",
+            ".\\traces\\mcf.trace",
+            ".\\traces\\swim.trace",
+            ".\\traces\\twolf.trace"
         };
 
         hits = 0;
@@ -64,6 +64,7 @@ public:
         for (const auto& trace_iter : traces) {
             hits=0;
             misses=0;
+            cache_mem.clear();
             cache_mem.resize(ways, vector<vector<string>>(indices, vector<string>(3, "0")));
             ifstream inputFile(trace_iter);
             if (!inputFile) {
@@ -85,10 +86,13 @@ public:
                     if (cache_mem[j][Gindex][0] == Gtag && cache_mem[j][Gindex][1] == "1") {
                         hits++;
                         hit = true;
+                        cache_mem[j][Gindex][2] = "0";
                         for (size_t k = 0; k < ways; ++k) {                         //increase the LRU value for all other blocks
-                            int temp = stoi(cache_mem[k][Gindex][2]);
-                            temp++;
-                            cache_mem[k][Gindex][2] = to_string(temp);
+                            if(k != j){
+                                int temp = stoi(cache_mem[k][Gindex][2]);
+                                temp++;
+                                cache_mem[k][Gindex][2] = to_string(temp);
+                            }
                         }
                         break;
                     }
@@ -124,7 +128,7 @@ public:
             hit_rate = static_cast<double>(hits) / total_instructions_double;
             miss_rate = static_cast<double>(misses) / total_instructions_double;
             double hm = static_cast<double>(hits )/static_cast<double>(misses) ;
-
+            cout<<"Lines of cache: "<<indices<<endl;
             cout<<"File name :"<<FileName[fileNo]<<endl;
             cout << "Total hits: "  << " is: " << hits << endl;
             cout << "Total misses: "  << " is: " << misses << endl;
