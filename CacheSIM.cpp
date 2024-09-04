@@ -42,7 +42,7 @@ public:
         offset_bits = log2(block_size);
         tag_bits = 32 - index_bits - offset_bits;
 
-        cache_mem.resize(ways, vector<vector<string>>(indices, vector<string>(3, "0")));
+        //cache_mem.resize(ways, vector<vector<string>>(indices, vector<string>(3, "0")));
     }
     string hexTo32BitBinary(const string& hexStr) {
         // Convert the hex string to an integer
@@ -59,8 +59,12 @@ public:
     }
     void calculateRates() {
         int fileNo = 0;
+        vector<string> FileName = {"gcc.trace", "gzip.trace", "mcf.trace", "swim.trace", "twolf.trace"};
+        
         for (const auto& trace_iter : traces) {
-            fileNo++;
+            hits=0;
+            misses=0;
+            cache_mem.resize(ways, vector<vector<string>>(indices, vector<string>(3, "0")));
             ifstream inputFile(trace_iter);
             if (!inputFile) {
                 cerr << "Error opening file: " << trace_iter << endl;
@@ -115,18 +119,20 @@ public:
                 }
             }
             inputFile.close();
-
+            
             double total_instructions_double = static_cast<double>(hits + misses);
             hit_rate = static_cast<double>(hits) / total_instructions_double;
             miss_rate = static_cast<double>(misses) / total_instructions_double;
             double hm = static_cast<double>(hits )/static_cast<double>(misses) ;
-            cout<<"File no. :"<<fileNo<<endl;
-            cout << "Total hits: " << fileNo << " is: " << hits << endl;
-            cout << "Total misses: " << fileNo << " is: " << misses << endl;
-            cout << "Hit Rate (as percent) of file " << fileNo << " is: " << hit_rate * 100 << endl;
-            cout << "Miss Rate (as percent) of file " << fileNo << " is: " << miss_rate * 100 << endl;
+
+            cout<<"File name :"<<FileName[fileNo]<<endl;
+            cout << "Total hits: "  << " is: " << hits << endl;
+            cout << "Total misses: "  << " is: " << misses << endl;
+            cout << "Hit Rate (as percent) of file "  << " is: " << hit_rate * 100 << endl;
+            cout << "Miss Rate (as percent) of file "  << " is: " << miss_rate * 100 << endl;
             cout<<"Hits\\Miss: "<<hm<<endl;
             cout << "___________________________________________________________________________________________________________________\n";
+            fileNo++;
         }
     }
 };
